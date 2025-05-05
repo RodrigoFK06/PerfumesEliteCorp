@@ -36,8 +36,13 @@ const nextConfig = {
         protocol: "https",
         hostname: "medusa-server-testing.s3.us-east-1.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "bucket-production-f253.up.railway.app",
+      },
     ],
   },
+
 }
 
 module.exports = nextConfig
