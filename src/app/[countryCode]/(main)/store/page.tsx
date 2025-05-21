@@ -18,16 +18,23 @@ type Params = {
   }>
 }
 
+
 export default async function StorePage(props: Params) {
-  const params = await props.params;
-  const searchParams = await props.searchParams;
-  const { sortBy, page } = searchParams
+  const params = await props.params
+  const searchParams = await props.searchParams
+
+  const sortBy = searchParams.sortBy
+  const page = searchParams.page
+  const collectionId = (searchParams as any).collection || "" // alternativa segura
 
   return (
-    <StoreTemplate
-      sortBy={sortBy}
-      page={page}
-      countryCode={params.countryCode}
-    />
+    <div className="bg-[#FFF9EF] min-h-screen px-6 py-10">
+      <StoreTemplate
+        sortBy={sortBy}
+        page={page}
+        countryCode={params.countryCode}
+      />
+    </div>
   )
 }
+

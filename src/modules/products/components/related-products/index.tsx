@@ -14,11 +14,8 @@ export default async function RelatedProducts({
 }: RelatedProductsProps) {
   const region = await getRegion(countryCode)
 
-  if (!region) {
-    return null
-  }
+  if (!region) return null
 
-  // edit this function to define your related products logic
   const queryParams: HttpTypes.StoreProductParams = {}
   if (region?.id) {
     queryParams.region_id = region.id
@@ -42,22 +39,20 @@ export default async function RelatedProducts({
     )
   })
 
-  if (!products.length) {
-    return null
-  }
+  if (!products.length) return null
 
   return (
-    <div className="product-page-constraint">
-      <div className="flex flex-col items-center text-center mb-16">
-        <span className="text-base-regular text-gray-600 mb-6">
-          Related products
+    <div className="product-page-constraint bg-[#FFF9EF] py-12 px-4">
+      <div className="flex flex-col items-center text-center mb-10">
+        <span className="text-base-regular text-gray-600 mb-2">
+          Productos relacionados
         </span>
         <p className="text-2xl-regular text-ui-fg-base max-w-lg">
-          You might also want to check out these products.
+          También te pueden interesar estos productos.
         </p>
       </div>
 
-      <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
+      <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-10">
         {products.map((product) => (
           <li key={product.id}>
             <Product region={region} product={product} />

@@ -8,9 +8,25 @@ export default async function FeaturedProducts({
   collections: HttpTypes.StoreCollection[]
   region: HttpTypes.StoreRegion
 }) {
-  return collections.map((collection) => (
-    <li key={collection.id}>
-      <ProductRail collection={collection} region={region} />
-    </li>
-  ))
+  // Solo visual: orden personalizado de secciones
+  const ordenVisual = [
+    "Productos Destacados",
+    "Perfume",
+    "Perfumes Hombre",
+    "Perfumes Mujer",
+  ]
+
+  const coleccionesOrdenadas = ordenVisual
+    .map((nombre) => collections.find((c) => c.title === nombre))
+    .filter((col): col is HttpTypes.StoreCollection => col !== undefined)
+
+  return (
+    <ul className="flex flex-col gap-y-12">
+      {coleccionesOrdenadas.map((collection) => (
+        <li key={collection.id}>
+          <ProductRail collection={collection} region={region} />
+        </li>
+      ))}
+    </ul>
+  )
 }

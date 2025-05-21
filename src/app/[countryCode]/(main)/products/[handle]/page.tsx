@@ -89,10 +89,13 @@ export default async function ProductPage(props: Props) {
   }
 
   return (
+  <div className="bg-[#FFF9EF] min-h-screen">
     <ProductTemplate
       product={pricedProduct}
       region={region}
       countryCode={params.countryCode}
     />
-  )
+  </div>
+)
+
 }

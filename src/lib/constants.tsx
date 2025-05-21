@@ -30,6 +30,14 @@ export const paymentInfoMap: Record<
     title: "Manual Payment",
     icon: <CreditCard />,
   },
+  "pp_system_default_yape": {
+    title: "Yape / Plin",
+    icon: <CreditCard />, // o ícono personalizado
+  },
+  "pp_system_default_transfer": {
+    title: "Transferencia Bancaria",
+    icon: <CreditCard />, // o ícono personalizado
+  },
   // Add more payment providers here
 }
 
@@ -43,6 +51,7 @@ export const isPaypal = (providerId?: string) => {
 export const isManual = (providerId?: string) => {
   return providerId?.startsWith("pp_system_default")
 }
+
 
 // Add currencies that don't need to be divided by 100
 export const noDivisionCurrencies = [
