@@ -376,14 +376,14 @@ const Shipping: React.FC<ShippingProps> = ({
         <div>
           <div className="text-small-regular">
             {cart && (cart.shipping_methods?.length ?? 0) > 0 && (
-              <div className="flex flex-col w-1/3">
+              <div className="flex flex-col w-full"> {/* Changed w-1/3 to w-full */}
                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
                   Se selecciono
                 </Text>
                 <Text className="txt-medium text-ui-fg-subtle">
-                  {cart.shipping_methods?.at(-1)?.name}{" "}
+                  {(cart.shipping_methods?.at(-1)?.shipping_option?.name || cart.shipping_methods?.at(-1)?.name || "Selected method")}{" "}
                   {convertToLocale({
-                    amount: cart.shipping_methods.at(-1)?.amount!,
+                    amount: (cart.shipping_methods?.at(-1)?.price ?? cart.shipping_methods?.at(-1)?.amount ?? 0),
                     currency_code: cart?.currency_code,
                   })}
                 </Text>

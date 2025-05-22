@@ -18,16 +18,18 @@ export default async function PaginatedProducts({
   sortBy,
   page,
   collectionId,
-  categoryId,
+  // categoryId, // Old single categoryId prop, to be removed or handled if still needed for other contexts
   productsIds,
   countryCode,
+  filterCategoryIds, // Added filterCategoryIds prop
 }: {
   sortBy?: SortOptions
   page: number
   collectionId?: string
-  categoryId?: string
+  // categoryId?: string // Old prop
   productsIds?: string[]
   countryCode: string
+  filterCategoryIds?: string[] // Added prop type
 }) {
   const queryParams: PaginatedProductsParams = {
     limit: 12,
@@ -37,9 +39,11 @@ export default async function PaginatedProducts({
     queryParams["collection_id"] = [collectionId]
   }
 
-  if (categoryId) {
-    queryParams["category_id"] = [categoryId]
-  }
+  // The new filterCategoryIds will be passed directly to listProductsWithSort,
+  // so the old logic for a single categoryId in queryParams here is no longer needed
+  // if (categoryId) {
+  //   queryParams["category_id"] = [categoryId]
+  // }
 
   if (productsIds) {
     queryParams["id"] = productsIds
@@ -59,9 +63,10 @@ export default async function PaginatedProducts({
     response: { products, count },
   } = await listProductsWithSort({
     page,
-    queryParams,
+    queryParams, // queryParams here should not contain category_id if it's handled by filterCategoryIds
     sortBy,
     countryCode,
+    categoryIds: filterCategoryIds, // Passed filterCategoryIds
   })
 
   const totalPages = Math.ceil(count / PRODUCT_LIMIT)

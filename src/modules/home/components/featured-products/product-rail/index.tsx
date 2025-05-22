@@ -44,7 +44,7 @@ export default async function ProductRail({
     variant === "launch"
       ? "flex flex-wrap gap-x-6 gap-y-10 justify-start"
       : variant === "horizontal"
-      ? "flex flex-wrap gap-4"
+      ? "flex flex-nowrap gap-4 overflow-x-auto py-1 no-scrollbar"
       : "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-12"
   }`}
 >
@@ -53,7 +53,7 @@ export default async function ProductRail({
       key={product.id}
       className={`${
         variant === "launch"
-          ? "w-[440px] h-[780px] bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between"
+          ? "w-full max-w-sm bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between"
           : variant === "horizontal"
           ? "p-3 w-[280px] h-[140px] bg-white rounded-md shadow-sm border border-gray-200"
           : size === "compact"

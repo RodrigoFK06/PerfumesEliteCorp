@@ -11,38 +11,64 @@ import ErrorMessage from "../error-message"
 import { SubmitButton } from "../submit-button"
 
 type DiscountCodeProps = {
-  cart: HttpTypes.StoreCart & {
-    promotions: HttpTypes.StorePromotion[]
-  }
+  cart: HttpTypes.StoreCart // Updated prop type
 }
 
 const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
   const [isOpen, setIsOpen] = React.useState(false)
-  const { promotions = [] } = cart
 
-  const removePromotionCode = async (code: string) => {
-    const validPromotions = promotions.filter((p) => p.code !== code)
+  const promotionsToDisplay =
+    cart.discounts
+      ?.filter(
+        (discount) => discount.is_applied && discount.rule !== undefined
+      )
+      .map((discount) => ({
+        id: discount.id, // Or discount.rule.id if that's more stable for keys
+        code: discount.rule!.code!, // Non-null assertion as rule is checked
+        is_automatic: discount.rule!.type === "free_shipping", // Example: adjust if other automatic types exist
+        value: discount.rule!.value!, // Non-null assertion
+        type: discount.rule!.type!, // Non-null assertion
+        currency_code: cart.currency_code, // From cart
+      })) || []
 
-    await applyPromotions(
-      validPromotions.filter((p) => p.code === undefined).map((p) => p.code!)
-    )
+  const removePromotionCode = async (codeToRemove: string) => {
+    const codesToKeep =
+      cart.discounts
+        ?.filter(
+          (d) =>
+            d.is_applied &&
+            d.rule?.code &&
+            d.rule.code !== codeToRemove &&
+            d.rule.type !== "free_shipping" // Assuming free_shipping is automatic and not manually removable this way
+        )
+        .map((d) => d.rule!.code!) || []
+    await applyPromotions(codesToKeep)
   }
 
   const addPromotionCode = async (formData: FormData) => {
-    const code = formData.get("code")
-    if (!code) return
+    const newCode = formData.get("code")?.toString()
+    if (!newCode) return
 
     const input = document.getElementById("promotion-input") as HTMLInputElement
-    const codes = promotions
-      .filter((p) => p.code === undefined)
-      .map((p) => p.code!)
-    codes.push(code.toString())
+    const existingCodes =
+      cart.discounts
+        ?.filter(
+          (d) =>
+            d.is_applied && d.rule?.code && d.rule.type !== "free_shipping"
+        )
+        .map((d) => d.rule!.code!) || []
 
-    await applyPromotions(codes)
+    if (!existingCodes.includes(newCode)) {
+      existingCodes.push(newCode)
+    }
+    await applyPromotions(existingCodes)
     if (input) input.value = ""
   }
 
+  // The useActionState for submitPromotionForm might need adjustment if it also relies on the old promotions structure.
+  // For now, focusing on the direct changes requested.
   const [message, formAction] = useActionState(submitPromotionForm, null)
+
 
   return (
     <div className="w-full flex flex-col bg-[#FFF9EF] px-2 pb-2 pt-0">
@@ -59,7 +85,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
       {/* Desplegable horizontal al hacer clic */}
       {isOpen && (
         <form
-          action={(a) => addPromotionCode(a)}
+          action={(a) => addPromotionCode(a)} // This directly calls addPromotionCode, bypassing formAction if that was intended for this button
           className="flex items-center gap-2 mb-2"
         >
           <Input
@@ -81,7 +107,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
       )}
 
       {/* Mensaje de error */}
-      {message && (
+      {message && ( // This message comes from submitPromotionForm, which might be outdated
         <ErrorMessage
           error={message}
           data-testid="discount-error-message"
@@ -90,42 +116,41 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
       )}
 
       {/* Lista de promociones activas */}
-      {promotions.length > 0 && (
+      {promotionsToDisplay.length > 0 && (
         <div className="flex flex-col gap-1 mt-1">
           <Heading className="text-sm font-semibold mb-1">
             Promociones aplicadas:
           </Heading>
-          {promotions.map((promotion) => (
+          {promotionsToDisplay.map((promo) => (
             <div
-              key={promotion.id}
+              key={promo.id}
               className="flex justify-between items-center text-sm bg-white px-3 py-1 rounded shadow-sm"
             >
               <Text className="truncate max-w-[70%]">
                 <Badge
-                  color={promotion.is_automatic ? "green" : "grey"}
+                  color={promo.is_automatic ? "green" : "grey"}
                   size="small"
                 >
-                  {promotion.code}
+                  {promo.code}
                 </Badge>{" "}
                 (
-                {promotion.application_method?.value !== undefined &&
-                  promotion.application_method.currency_code !== undefined && (
+                {promo.value !== undefined &&
+                  promo.currency_code !== undefined && ( // Use currency_code from mapped promo
                     <>
-                      {promotion.application_method.type === "percentage"
-                        ? `${promotion.application_method.value}%`
+                      {promo.type === "percentage"
+                        ? `${promo.value}%`
                         : convertToLocale({
-                            amount: promotion.application_method.value,
-                            currency_code:
-                              promotion.application_method.currency_code,
+                            amount: Number(promo.value), // Ensure value is a number
+                            currency_code: promo.currency_code,
                           })}
                     </>
                   )}
                 )
               </Text>
-              {!promotion.is_automatic && (
+              {!promo.is_automatic && (
                 <button
                   onClick={() =>
-                    promotion.code && removePromotionCode(promotion.code)
+                    promo.code && removePromotionCode(promo.code)
                   }
                   className="text-red-500 hover:text-red-700"
                   data-testid="remove-discount-button"

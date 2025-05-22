@@ -25,10 +25,10 @@ export default async function ProductPreview({
       href={`/products/${product.handle}`}
       className="group"
     >
-      <div className="bg-white rounded-xl border border-gray-200 transition-all duration-200 hover:shadow-md overflow-hidden w-[440px] h-[780px] flex flex-col">
+      <div className="bg-white rounded-xl border border-gray-200 transition-all duration-200 hover:shadow-md overflow-hidden w-full h-full flex flex-col">
         
         {/* Imagen dominante */}
-        <div className="relative w-full h-[600px]">
+        <div className="relative w-full aspect-[4/5]">
           <Thumbnail
             thumbnail={product.thumbnail}
             images={product.images}
@@ -52,7 +52,7 @@ export default async function ProductPreview({
             <span className="text-lg font-bold text-[#8B3A15]">
               {cheapestPrice?.calculated_price || "S/ --"}
             </span>
-            <span className="text-yellow-500 text-sm">★★★★★</span>
+            {/* Star rating span removed */}
           </div>
 
           <button className="mt-2 bg-[#8B3A15] text-white text-sm py-2 rounded-md hover:bg-[#6a2a0f] transition">
@@ -104,9 +104,7 @@ export default async function ProductPreview({
             {product.title}
           </Text>
 
-          {variant == "vertical" && (
-            <Text className="text-sm text-gray-500">100ml</Text>
-          )}
+          {/* "100ml" text block removed */}
 
           {cheapestPrice && (
             <PreviewPrice price={cheapestPrice} />

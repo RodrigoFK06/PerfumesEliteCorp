@@ -49,7 +49,7 @@ export default function Footer() {
 
       {/* Línea inferior */}
       <div className="mt-10 border-t border-gray-700 pt-6 text-center text-sm text-gray-400">
-        © 2025 Corporación Perfumes Élite. Todos los derechos reservados.
+        © {new Date().getFullYear()} Corporación Perfumes Élite. Todos los derechos reservados.
       </div>
     </footer>
   )

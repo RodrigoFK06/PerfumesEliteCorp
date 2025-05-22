@@ -9,9 +9,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import { HttpTypes } from "@medusajs/types"
 
 type SummaryProps = {
-  cart: HttpTypes.StoreCart & {
-    promotions: HttpTypes.StorePromotion[]
-  }
+  cart: HttpTypes.StoreCart // Updated prop type
 }
 
 function getCheckoutStep(cart: HttpTypes.StoreCart) {
@@ -28,7 +26,7 @@ const Summary = ({ cart }: SummaryProps) => {
   const step = getCheckoutStep(cart)
 
   return (
-    <div className="flex flex-col gap-y-4"> {/* No se usa sticky */}
+    <div className="flex flex-col gap-y-4 sm:sticky sm:top-24">
       <Heading level="h2" className="text-[2rem] leading-[2.75rem] text-[#1a1a1a]">
         Resumen
       </Heading>

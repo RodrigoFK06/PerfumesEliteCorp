@@ -40,9 +40,30 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
       })
   }
 
-  // TODO: Update this to grab the actual max inventory
-  const maxQtyFromInventory = 10
-  const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
+  // Determine max selectable quantity based on inventory and backorder policy
+  let max_options_to_display: number
+  if (
+    item.variant?.manage_inventory === false ||
+    item.variant?.allow_backorder === true
+  ) {
+    max_options_to_display = 50 // Sensible upper limit when inventory is not managed or backorders are allowed
+  } else {
+    max_options_to_display = item.variant?.inventory_quantity ?? 0 // Use inventory_quantity, default to 0 if null/undefined
+  }
+
+  let final_loop_limit = Math.min(max_options_to_display, 50)
+
+  // Edge case: If stock is 0 and no backorders, but item is in cart (e.g. quantity > 0)
+  // Allow selecting up to current quantity or a small cap like 10.
+  if (final_loop_limit === 0 && item.quantity > 0) {
+    final_loop_limit = Math.min(Math.max(1, item.quantity), 10)
+  }
+  // Ensure there's at least one option if the item is in the cart, even if final_loop_limit ended up 0
+  // For example, if item.quantity is 0 (should not happen for an item in cart) and inventory is 0.
+  // However, the loop `Array.from({ length: final_loop_limit })` handles length 0 correctly (empty array).
+  // And if quantity is 1, `Math.max(1,1)` is 1. If quantity is 0, `Math.max(1,0)` is 1. So it will show at least 1.
+  // The condition `item.quantity > 0` in the above if block already ensures we only adjust if item is genuinely in cart.
+  // If `final_loop_limit` is 0 and `item.quantity` is also 0, then `final_loop_limit` remains 0, and no options are rendered, which is fine.
 
   return (
     <Table.Row className="w-full" data-testid="product-row">
@@ -51,7 +72,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
           href={`/products/${item.product_handle}`}
           className={clx("flex", {
             "w-16": type === "preview",
-            "small:w-24 w-12": type === "full",
+            "small:w-24 w-20": type === "full",
           })}
         >
           <Thumbnail
@@ -82,21 +103,16 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
               className="w-14 h-10 p-4"
               data-testid="product-select-button"
             >
-              {/* TODO: Update this with the v2 way of managing inventory */}
               {Array.from(
                 {
-                  length: Math.min(maxQuantity, 10),
+                  length: final_loop_limit,
                 },
                 (_, i) => (
-                  <option value={i + 1} key={i}>
+                  <option value={i + 1} key={i + 1}>
                     {i + 1}
                   </option>
                 )
               )}
-
-              <option value={1} key={1}>
-                1
-              </option>
             </CartItemSelect>
             {updating && <Spinner />}
           </div>

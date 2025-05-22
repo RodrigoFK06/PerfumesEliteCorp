@@ -14,9 +14,9 @@ const ShippingDetails = ({ order }: ShippingDetailsProps) => {
       <Heading level="h2" className="flex flex-row text-3xl-regular my-6">
         Delivery
       </Heading>
-      <div className="flex items-start gap-x-8">
+      <div className="flex flex-col md:flex-row md:items-start md:gap-x-8 gap-y-6">
         <div
-          className="flex flex-col w-1/3"
+          className="flex flex-col w-full md:w-1/3"
           data-testid="shipping-address-summary"
         >
           <Text className="txt-medium-plus text-ui-fg-base mb-1">
@@ -40,7 +40,7 @@ const ShippingDetails = ({ order }: ShippingDetailsProps) => {
         </div>
 
         <div
-          className="flex flex-col w-1/3 "
+          className="flex flex-col w-full md:w-1/3"
           data-testid="shipping-contact-summary"
         >
           <Text className="txt-medium-plus text-ui-fg-base mb-1">Contacto</Text>
@@ -51,19 +51,16 @@ const ShippingDetails = ({ order }: ShippingDetailsProps) => {
         </div>
 
         <div
-          className="flex flex-col w-1/3"
+          className="flex flex-col w-full md:w-1/3"
           data-testid="shipping-method-summary"
         >
           <Text className="txt-medium-plus text-ui-fg-base mb-1">Metodo de envio</Text>
           <Text className="txt-medium text-ui-fg-subtle">
-            {(order as any).shipping_methods[0]?.name} (
-            {convertToLocale({
-              amount: order.shipping_methods?.[0].total ?? 0,
+            {(order.shipping_methods?.[0]?.shipping_option?.name || order.shipping_methods?.[0]?.name || "N/A")}{" "}
+            ({convertToLocale({
+              amount: (order.shipping_methods?.[0]?.price ?? 0),
               currency_code: order.currency_code,
-            })
-              .replace(/,/g, "")
-              .replace(/\./g, ",")}
-            )
+            })})
           </Text>
         </div>
       </div>

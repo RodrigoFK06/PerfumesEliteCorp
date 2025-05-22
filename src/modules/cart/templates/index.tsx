@@ -16,7 +16,7 @@ const CartTemplate = ({
     <div className="py-12 bg-[#FFF9EF]"> {/* Fondo crema global */}
       <div className="content-container" data-testid="cart-container">
         {cart?.items?.length ? (
-          <div className="grid grid-cols-1 small:grid-cols-[1fr_360px] gap-x-40">
+          <div className="grid grid-cols-1 small:grid-cols-[1fr_360px] gap-x-16">
             <div className="flex flex-col py-6 gap-y-6"> {/* Quitar bg-white */}
               {!customer && (
                 <>
@@ -31,7 +31,7 @@ const CartTemplate = ({
                 {cart && cart.region && (
                   <>
                     <div className="py-6"> {/* Quitar bg-white */}
-                      <Summary cart={cart as any} />
+                      <Summary cart={cart} />
                     </div>
                   </>
                 )}
@@ -39,9 +39,7 @@ const CartTemplate = ({
             </div>
           </div>
         ) : (
-          <div className="min-h-screen">
-            <EmptyCartMessage />
-          </div>
+          <EmptyCartMessage />
         )}
       </div>
     </div>

@@ -189,8 +189,17 @@ const ManualTestPaymentButton = ({
         throw new Error("La sesión de pago aún no está disponible.")
       }
 
-      await placeOrder(updatedCart.id)
-      router.push("/app/order")
+      const order = await placeOrder(updatedCart.id)
+
+      if (order && order.id) {
+        router.push(`/order/confirmed/${order.id}?status=pending_manual_payment`)
+      } else {
+        // This else block might be redundant if placeOrder always throws on failure
+        // or always returns an order with an id on success.
+        // However, it's a safeguard.
+        console.error("Order placement succeeded but no order ID was returned.")
+        setErrorMessage("Error al confirmar el pedido: No se recibió ID de orden.")
+      }
     } catch (err: any) {
       console.error(err)
       setErrorMessage(err.message || "Error al confirmar el pedido.")

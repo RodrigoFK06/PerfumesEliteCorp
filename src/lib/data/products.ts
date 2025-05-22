@@ -94,11 +94,13 @@ export const listProductsWithSort = async ({
   queryParams,
   sortBy = "created_at",
   countryCode,
+  categoryIds, // Added categoryIds parameter
 }: {
   page?: number
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
   sortBy?: SortOptions
   countryCode: string
+  categoryIds?: string[] // Added type for categoryIds
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
@@ -113,6 +115,7 @@ export const listProductsWithSort = async ({
     queryParams: {
       ...queryParams,
       limit: 100,
+      ...(categoryIds && categoryIds.length > 0 && { category_id: categoryIds }), // Conditionally add category_id
     },
     countryCode,
   })

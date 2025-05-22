@@ -13,7 +13,7 @@ type OverviewProps = {
 const Overview = ({ customer, orders }: OverviewProps) => {
   return (
     <div data-testid="overview-page-wrapper">
-      <div className="hidden small:block">
+      <div className="">
         <div className="text-xl-semi flex justify-between items-center mb-4">
           <span data-testid="welcome-message" data-value={customer?.first_name}>
             Hello {customer?.first_name}
@@ -31,7 +31,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
         </div>
         <div className="flex flex-col py-8 border-t border-gray-200">
           <div className="flex flex-col gap-y-4 h-full col-span-1 row-span-2 flex-1">
-            <div className="flex items-start gap-x-16 mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:gap-x-16 gap-y-6 mb-6">
               <div className="flex flex-col gap-y-4">
                 <h3 className="text-large-semi">Profile</h3>
                 <div className="flex items-end gap-x-2">
@@ -85,7 +85,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                           href={`/account/orders/details/${order.id}`}
                         >
                           <Container className="bg-gray-50 flex justify-between items-center p-4">
-                            <div className="grid grid-cols-3 grid-rows-2 text-small-regular gap-x-4 flex-1">
+                            <div className="grid grid-cols-1 xs:grid-cols-3 xs:grid-rows-2 text-small-regular gap-x-4 gap-y-1 flex-1">
                               <span className="font-semibold">Date placed</span>
                               <span className="font-semibold">
                                 Order number
