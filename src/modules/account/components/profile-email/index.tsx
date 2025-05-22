@@ -15,7 +15,7 @@ type MyInformationProps = {
 const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
   const [successState, setSuccessState] = React.useState(false)
 
-  const updateCustomerEmail = (
+  const updateCustomerEmail = async ( // Added async keyword
     _currentState: Record<string, unknown>,
     formData: FormData
   ) => {
