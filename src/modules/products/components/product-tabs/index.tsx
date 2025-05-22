@@ -1,6 +1,5 @@
 "use client"
 
-import Back from "@modules/common/icons/back"
 import FastDelivery from "@modules/common/icons/fast-delivery"
 import Refresh from "@modules/common/icons/refresh"
 
@@ -14,11 +13,11 @@ type ProductTabsProps = {
 const ProductTabs = ({ product }: ProductTabsProps) => {
   const tabs = [
     {
-      label: "Informacion del Producto",
+      label: "Información del producto",
       component: <ProductInfoTab product={product} />,
     },
     {
-      label: "Envios y Reembolsos",
+      label: "Envíos y reembolsos",
       component: <ShippingInfoTab />,
     },
   ]
@@ -51,7 +50,7 @@ const ProductInfoTab = ({ product }: ProductTabsProps) => {
             <p>{product.material ? product.material : "-"}</p>
           </div>
           <div>
-            <span className="font-semibold">Country of origin</span>
+            <span className="font-semibold">País de origen</span>
             <p>{product.origin_country ? product.origin_country : "-"}</p>
           </div>
           <div>
@@ -68,7 +67,7 @@ const ProductInfoTab = ({ product }: ProductTabsProps) => {
             <span className="font-semibold">Dimensiones</span>
             <p>
               {product.length && product.width && product.height
-                ? `${product.length}L x ${product.width}W x ${product.height}H`
+                ? `${product.length}L x ${product.width}A x ${product.height}H`
                 : "-"}
             </p>
           </div>
@@ -85,20 +84,18 @@ const ShippingInfoTab = () => {
         <div className="flex items-start gap-x-2">
           <FastDelivery />
           <div>
-            <span className="font-semibold">Delivery Rapido</span>
+            <span className="font-semibold">Envío rápido</span>
             <p className="max-w-sm">
-              Su pedido se enviara el mismo dia despues de confirmar
-              su pedido
+              Su pedido se enviará el mismo día después de confirmar su compra.
             </p>
           </div>
         </div>
         <div className="flex items-start gap-x-2">
           <Refresh />
           <div>
-            <span className="font-semibold">Reembolsos simples</span>
+            <span className="font-semibold">Reembolsos sencillos</span>
             <p className="max-w-sm">
-              Le llego algo que no pidio no se preocupe nos aseguraremos
-              de cambiarlo en caso de equivocarnos
+              ¿Le llegó algo que no pidió? No se preocupe, nos aseguraremos de cambiarlo en caso de error.
             </p>
           </div>
         </div>

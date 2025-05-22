@@ -19,7 +19,7 @@ const CheckoutSummary = ({ cart }: { cart: any }) => {
         <Divider className="my-6" />
         <CartTotals totals={cart} />
         <div className="bg-[#FFF9EF] rounded-lg shadow-inner p-4">
-  <     div className="bg-[#FFF9EF]">
+    < div className="w-full bg-[#FFF9EF] rounded-lg shadow-md p-6 overflow-x-auto">
          <ItemsPreviewTemplate cart={cart} />
         </div>
         </div>

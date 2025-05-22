@@ -1,14 +1,12 @@
 "use client"
 
-import { Table, Text, clx } from "@medusajs/ui"
+import { Text, clx } from "@medusajs/ui"
 import { updateLineItem } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import CartItemSelect from "@modules/cart/components/cart-item-select"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import DeleteButton from "@modules/common/components/delete-button"
-import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
-import LineItemUnitPrice from "@modules/common/components/line-item-unit-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
@@ -16,8 +14,8 @@ import { useState } from "react"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
-  type?: "full" | "preview"
   currencyCode: string
+  type?: "full" | "preview-card" | "card"
 }
 
 const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
@@ -40,19 +38,16 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
       })
   }
 
-  // TODO: Update this to grab the actual max inventory
   const maxQtyFromInventory = 10
   const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
 
+ if (type === "card" || type === "preview-card") {
   return (
-    <Table.Row className="w-full" data-testid="product-row">
-      <Table.Cell className="!pl-0 p-4 w-24">
+    <div className="flex flex-col gap-3 bg-[#FFF9EF] rounded-lg border border-[#e3d5bc] p-4 shadow-sm w-full">
+      <div className="flex items-start gap-4">
         <LocalizedClientLink
           href={`/products/${item.product_handle}`}
-          className={clx("flex", {
-            "w-16": type === "preview",
-            "small:w-24 w-12": type === "full",
-          })}
+          className="w-20 h-20 flex-shrink-0"
         >
           <Thumbnail
             thumbnail={item.thumbnail}
@@ -60,84 +55,111 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
             size="square"
           />
         </LocalizedClientLink>
-      </Table.Cell>
 
-      <Table.Cell className="text-left">
-        <Text
-          className="txt-medium-plus text-ui-fg-base"
-          data-testid="product-title"
-        >
-          {item.product_title}
-        </Text>
-        <LineItemOptions variant={item.variant} data-testid="product-variant" />
-      </Table.Cell>
+        <div className="flex flex-col min-w-0">
+          <Text className="font-semibold text-[#1a1a1a] text-sm truncate">
+            {item.product_title}
+          </Text>
+          <Text className="text-xs text-gray-500 truncate">
+            Variante: {item.variant?.title}
+          </Text>
+        </div>
+      </div>
 
-      {type === "full" && (
-        <Table.Cell>
-          <div className="flex gap-2 items-center w-28">
-            <DeleteButton id={item.id} data-testid="product-delete-button" />
+      {type !== "preview-card" && (
+        <div className="flex justify-between items-center flex-wrap gap-y-2 mt-1">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full">
+            <DeleteButton id={item.id} />
             <CartItemSelect
               value={item.quantity}
-              onChange={(value) => changeQuantity(parseInt(value.target.value))}
-              className="w-14 h-10 p-4"
-              data-testid="product-select-button"
+              onChange={(e) => changeQuantity(parseInt(e.target.value))}
+              className="w-14 h-9 text-sm"
             >
-              {/* TODO: Update this with the v2 way of managing inventory */}
-              {Array.from(
-                {
-                  length: Math.min(maxQuantity, 10),
-                },
-                (_, i) => (
-                  <option value={i + 1} key={i}>
-                    {i + 1}
-                  </option>
-                )
-              )}
-
-              <option value={1} key={1}>
-                1
-              </option>
+              {Array.from({ length: Math.min(maxQuantity, 10) }, (_, i) => (
+                <option value={i + 1} key={i}>
+                  {i + 1}
+                </option>
+              ))}
             </CartItemSelect>
             {updating && <Spinner />}
           </div>
-          <ErrorMessage error={error} data-testid="product-error-message" />
-        </Table.Cell>
+          <div className="text-right text-sm">
+            <LineItemPrice
+              item={item}
+              style="tight"
+              currencyCode={currencyCode}
+            />
+          </div>
+        </div>
       )}
 
-      {type === "full" && (
-        <Table.Cell className="hidden small:table-cell">
-          <LineItemUnitPrice
-            item={item}
-            style="tight"
-            currencyCode={currencyCode}
-          />
-        </Table.Cell>
-      )}
-
-      <Table.Cell className="!pr-0">
-        <span
-          className={clx("!pr-0", {
-            "flex flex-col items-end h-full justify-center": type === "preview",
-          })}
-        >
-          {type === "preview" && (
-            <span className="flex gap-x-1 ">
-              <Text className="text-ui-fg-muted">{item.quantity}x </Text>
-              <LineItemUnitPrice
-                item={item}
-                style="tight"
-                currencyCode={currencyCode}
-              />
-            </span>
-          )}
+      {type === "preview-card" && (
+        <div className="text-right text-sm mt-2">
           <LineItemPrice
             item={item}
             style="tight"
             currencyCode={currencyCode}
           />
-        </span>
-      </Table.Cell>
-    </Table.Row>
+        </div>
+      )}
+
+      {error && <ErrorMessage error={error} />}
+    </div>
+  )
+}
+
+
+  // Fallback para tabla en escritorio
+  return (
+    <tr>
+      <td className="p-4">
+        <div className="flex gap-3 items-center">
+          <LocalizedClientLink
+            href={`/products/${item.product_handle}`}
+            className="w-14 h-14 flex-shrink-0"
+          >
+            <Thumbnail
+              thumbnail={item.thumbnail}
+              images={item.variant?.product?.images}
+              size="square"
+            />
+          </LocalizedClientLink>
+          <div>
+            <Text className="text-sm font-medium text-[#1a1a1a]">
+              {item.product_title}
+            </Text>
+            <Text className="text-xs text-gray-500">
+              {item.variant?.title}
+            </Text>
+          </div>
+        </div>
+      </td>
+      <td className="text-center">
+        <div className="flex justify-center items-center gap-2">
+          <DeleteButton id={item.id} />
+          <CartItemSelect
+            value={item.quantity}
+            onChange={(e) => changeQuantity(parseInt(e.target.value))}
+            className="w-14 h-9 text-sm"
+          >
+            {Array.from({ length: Math.min(maxQuantity, 10) }, (_, i) => (
+              <option value={i + 1} key={i}>
+                {i + 1}
+              </option>
+            ))}
+          </CartItemSelect>
+          {updating && <Spinner />}
+        </div>
+        <ErrorMessage error={error} />
+      </td>
+      <td className="text-right pr-4">
+        <LineItemPrice
+          item={item}
+          style="tight"
+          currencyCode={currencyCode}
+        />
+      </td>
+    </tr>
   )
 }
 

@@ -26,25 +26,20 @@ export default async function CheckoutForm({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Contenido del checkout */}
-      <main className="flex-1 w-full grid grid-cols-1 gap-y-8">
-        <div className="bg-[#FFF9EF] rounded-lg shadow-md p-6">
-          <Addresses cart={cart} customer={customer} />
-        </div>
+    <div className="min-h-screen flex flex-col items-center px-4 sm:px-6">
+      <div className="w-full max-w-4xl space-y-6">
+        {/* Dirección */}
+        <Addresses cart={cart} customer={customer} />
 
-        <div className="bg-[#FFF9EF] rounded-lg shadow-md p-6">
+        {/* Envío */}
           <Shipping cart={cart} availableShippingMethods={shippingMethods} />
-        </div>
 
-        <div className="bg-[#FFF9EF] rounded-lg shadow-md p-6">
+        {/* Pago */}
           <Payment cart={cart} availablePaymentMethods={paymentMethods} />
-        </div>
 
-        <div className="bg-[#FFF9EF] rounded-lg shadow-md p-6">
+        {/* Revisión */}
           <Review cart={cart} />
-        </div>
-      </main>
+      </div>
     </div>
   )
 }
