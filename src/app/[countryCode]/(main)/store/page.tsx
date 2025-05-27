@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 type Params = {
   searchParams: Promise<{
-    sortBy?: SortOptions
+    sortBy?: SortOptions | string
     page?: string
   }>
   params: Promise<{
@@ -18,14 +18,25 @@ type Params = {
   }>
 }
 
-
 export default async function StorePage(props: Params) {
   const params = await props.params
   const searchParams = await props.searchParams
 
-  const sortBy = searchParams.sortBy
+  const rawSortBy = searchParams.sortBy
   const page = searchParams.page
-  const collectionId = (searchParams as any).collection || "" // alternativa segura
+
+  let sortBy: SortOptions | undefined = undefined
+  let collectionHandle: string | undefined = undefined
+
+  if (rawSortBy?.startsWith("collection_")) {
+    collectionHandle = rawSortBy.replace("collection_", "")
+  } else if (
+    rawSortBy === "price_asc" ||
+    rawSortBy === "price_desc" ||
+    rawSortBy === "created_at"
+  ) {
+    sortBy = rawSortBy
+  }
 
   return (
     <div className="bg-[#FFF9EF] min-h-screen px-6 py-10">
@@ -33,8 +44,8 @@ export default async function StorePage(props: Params) {
         sortBy={sortBy}
         page={page}
         countryCode={params.countryCode}
+        collectionHandle={collectionHandle} // ✅ solo se pasa si es válido
       />
     </div>
   )
 }
-

@@ -4,6 +4,7 @@ import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "../thumbnail"
 import PreviewPrice from "./price"
+
 export default async function ProductPreview({
   product,
   isFeatured,
@@ -15,56 +16,52 @@ export default async function ProductPreview({
   region: HttpTypes.StoreRegion
   variant?: "vertical" | "horizontal" | "launch"
 }) {
-
   const { cheapestPrice } = getProductPrice({ product })
 
-  // Variante especial: tarjeta grande para "Nuevos Lanzamientos"
- if (variant === "launch") {
-  return (
-    <LocalizedClientLink
-      href={`/products/${product.handle}`}
-      className="group"
-    >
-      <div className="bg-white rounded-xl border border-gray-200 transition-all duration-200 hover:shadow-md overflow-hidden w-[440px] h-[780px] flex flex-col">
-        
-        {/* Imagen dominante */}
-        <div className="relative w-full h-[600px]">
-          <Thumbnail
-            thumbnail={product.thumbnail}
-            images={product.images}
-            size="full"
-            isFeatured={isFeatured}
-          />
-        </div>
-
-        {/* Contenido compacto */}
-        <div className="p-4 pt-2 flex flex-col justify-end gap-1 h-full">
-          <div className="flex justify-between items-center">
-            <Text className="text-base font-semibold text-[#2E2E2E] truncate">
-              {product.title}
-            </Text>
-            <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
-              Nuevo
-            </span>
+  if (variant === "launch") {
+    return (
+      <LocalizedClientLink
+        href={`/products/${product.handle}`}
+        className="group"
+      >
+        <div className="bg-white rounded-xl border border-gray-200 transition-all duration-200 hover:shadow-md overflow-hidden flex flex-col h-full">
+          {/* Imagen */}
+          <div className="relative w-full aspect-[3/4] sm:aspect-[3/3.2]">
+            <Thumbnail
+              thumbnail={product.thumbnail}
+              images={product.images}
+              size="full"
+              isFeatured={isFeatured}
+            />
           </div>
 
-          <div className="flex justify-between items-center">
-            <span className="text-lg font-bold text-[#8B3A15]">
-              {cheapestPrice?.calculated_price || "S/ --"}
-            </span>
-            <span className="text-yellow-500 text-sm">★★★★★</span>
+          {/* Contenido */}
+          <div className="p-4 pt-3 flex flex-col justify-end gap-2 flex-grow">
+            <div className="flex justify-between items-center">
+              <Text className="text-base font-semibold text-[#2E2E2E] truncate">
+                {product.title}
+              </Text>
+              <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+                Nuevo
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-bold text-[#8B3A15]">
+                {cheapestPrice?.calculated_price || "S/ --"}
+              </span>
+              <span className="text-yellow-500 text-sm">★★★★★</span>
+            </div>
+
+            <button className="mt-2 bg-[#8B3A15] text-white text-sm py-2 rounded-md hover:bg-[#6a2a0f] transition">
+              Ver Detalles
+            </button>
           </div>
-
-          <button className="mt-2 bg-[#8B3A15] text-white text-sm py-2 rounded-md hover:bg-[#6a2a0f] transition">
-            Ver Detalles
-          </button>
         </div>
-      </div>
-    </LocalizedClientLink>
-  )
-}
+      </LocalizedClientLink>
+    )
+  }
 
-  // Variante estándar: vertical u horizontal
   return (
     <LocalizedClientLink
       href={`/products/${product.handle}`}
@@ -82,8 +79,8 @@ export default async function ProductPreview({
         <div
           className={`relative overflow-hidden ${
             variant === "horizontal"
-              ? "w-28 h-28 flex-shrink-0 rounded-md"
-              : "w-full"
+              ? "w-24 h-24 flex-shrink-0 rounded-md"
+              : "w-full aspect-[4/5] rounded-md"
           }`}
         >
           <Thumbnail
@@ -100,11 +97,11 @@ export default async function ProductPreview({
             variant === "horizontal" ? "gap-1" : "gap-2 mt-4"
           }`}
         >
-          <Text className="text-base font-semibold text-[#2E2E2E]">
+          <Text className="text-base font-semibold text-[#2E2E2E] truncate">
             {product.title}
           </Text>
 
-          {variant == "vertical" && (
+          {variant === "vertical" && (
             <Text className="text-sm text-gray-500">100ml</Text>
           )}
 

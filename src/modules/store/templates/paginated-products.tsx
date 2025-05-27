@@ -1,5 +1,6 @@
 import { listProductsWithSort } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
+import { listCollections } from "@lib/data/collections"
 import ProductPreview from "@modules/products/components/product-preview"
 import { Pagination } from "@modules/store/components/pagination"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
@@ -21,6 +22,7 @@ export default async function PaginatedProducts({
   categoryId,
   productsIds,
   countryCode,
+  collectionHandle, // ✅ agregado para recibir el handle
 }: {
   sortBy?: SortOptions
   page: number
@@ -28,9 +30,22 @@ export default async function PaginatedProducts({
   categoryId?: string
   productsIds?: string[]
   countryCode: string
+  collectionHandle?: string // ✅ agregado a props
 }) {
+  const region = await getRegion(countryCode)
+  if (!region) return null
+
+  // ✅ Si no se pasó directamente el ID, buscarlo por handle
+  if (!collectionId && collectionHandle) {
+    const { collections } = await listCollections({})
+    const found = collections.find((c) => c.handle === collectionHandle)
+    if (found) {
+      collectionId = found.id
+    }
+  }
+
   const queryParams: PaginatedProductsParams = {
-    limit: 12,
+    limit: PRODUCT_LIMIT,
   }
 
   if (collectionId) {
@@ -49,13 +64,7 @@ export default async function PaginatedProducts({
     queryParams["order"] = "created_at"
   }
 
-  const region = await getRegion(countryCode)
-
-  if (!region) {
-    return null
-  }
-
-  let {
+  const {
     response: { products, count },
   } = await listProductsWithSort({
     page,
@@ -72,13 +81,11 @@ export default async function PaginatedProducts({
         className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
         data-testid="products-list"
       >
-        {products.map((p) => {
-          return (
-            <li key={p.id}>
-              <ProductPreview product={p} region={region} />
-            </li>
-          )
-        })}
+        {products.map((p) => (
+          <li key={p.id}>
+            <ProductPreview product={p} region={region} />
+          </li>
+        ))}
       </ul>
       {totalPages > 1 && (
         <Pagination

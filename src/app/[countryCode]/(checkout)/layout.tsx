@@ -59,7 +59,7 @@ export default async function CheckoutLayout({
                 href="/account"
                 data-testid="nav-account-link"
               >
-                Cuenta
+               
               </LocalizedClientLink>
             </div>
             <Suspense

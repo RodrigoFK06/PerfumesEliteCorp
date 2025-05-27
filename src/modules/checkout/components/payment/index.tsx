@@ -142,33 +142,35 @@ useEffect(() => {
   }, [isOpen])
 
   return (
-    <div className="bg-[#FFF9EF] p-4 rounded-md">
-      <div className="flex flex-row items-center justify-between mb-6">
-        <Heading
-          level="h2"
-          className={clx(
-            "flex flex-row text-3xl-regular gap-x-2 items-baseline",
-            {
-              "opacity-50 pointer-events-none select-none":
-                !isOpen && !paymentReady,
-            }
-          )}
-        >
-          Metodo de Pago
-          {!isOpen && paymentReady && <CheckCircleSolid />}
-        </Heading>
-        {!isOpen && paymentReady && (
-          <Text>
-            <button
-              onClick={handleEdit}
-              className="text-[#8B3A15] hover:underline font-medium"
-              data-testid="edit-payment-button"
-            >
-              Editar
-            </button>
-          </Text>
-        )}
-      </div>
+<div className="bg-[#FFF9EF] p-6 rounded-md shadow-md w-full">
+   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+  <Heading
+    level="h2"
+    className={clx(
+      "flex flex-row text-3xl font-bold text-[#1a1a1a] gap-x-2 items-baseline",
+      {
+        "opacity-50 pointer-events-none select-none":
+          !isOpen && !paymentReady,
+      }
+    )}
+  >
+    Metodo de Pago
+    {!isOpen && paymentReady && <CheckCircleSolid />}
+  </Heading>
+
+  {!isOpen && paymentReady && (
+    <Text>
+      <button
+        onClick={handleEdit}
+        className="text-[#8B3A15] hover:underline font-medium"
+        data-testid="edit-payment-button"
+      >
+        Editar
+      </button>
+    </Text>
+  )}
+</div>
+
       <div>
         <div className={isOpen ? "block" : "hidden"}>
           {!paidByGiftcard && (
@@ -227,7 +229,7 @@ useEffect(() => {
           )}
 
   
-<div className="flex items-center justify-between mt-6">
+<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-6 gap-4">
   <Button
     size="large"
     onClick={handleSubmit}
@@ -246,9 +248,13 @@ useEffect(() => {
   {/* Temporizador siempre visible con Yape o Transferencia */}
   {(selectedPaymentMethod === "pp_system_default_yape" ||
     selectedPaymentMethod === "pp_system_default_transfer") && (
-    <div className="ml-4 text-sm font-medium text-[#0d0d0d] bg-[#FFF9EF] border border-[#8B3A15] px-4 py-2 rounded shadow-sm">
-      ⏳ Tiempo restante para confirmar tu pago: <span id="timer">15:00</span>
-    </div>
+    <div className="mt-4 sm:mt-0 sm:ml-4 w-full sm:w-auto">
+  <div className="text-sm font-medium text-[#0d0d0d] bg-[#FFF9EF] border border-[#8B3A15] px-4 py-2 rounded shadow-sm w-full text-center sm:text-left">
+    ⏳ Tiempo restante para confirmar tu pago:
+    <span id="timer" className="ml-1 font-semibold text-[#8B3A15]">15:00</span>
+  </div>
+</div>
+
   )}
 </div>
 

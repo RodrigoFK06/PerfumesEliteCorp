@@ -47,6 +47,24 @@
   input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: none;
   }
+  img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+/* Opcional: oculta barra de scroll horizontal */
+::-webkit-scrollbar {
+  display: none;
+}
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
 }
 
 @layer components {
